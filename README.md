@@ -10,5 +10,5 @@ into MySQL database.
 
 Later lease history can be searched by using search.py script.
 
-Multiple failover servers are supported as long as every server processes log
-files to the same database. 
+Multiple failover DHCP servers are supported as long as every server processes
+log files to the same database. 
