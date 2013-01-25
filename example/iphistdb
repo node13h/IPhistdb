@@ -1,0 +1,4 @@
+#!/bin/bash
+
+/usr/bin/python /opt/IPhistdb/maintenance.py
+/usr/bin/python /opt/IPhistdb/process.py `find /var/log -name 'dhcpd.log-*'`

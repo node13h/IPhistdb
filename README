@@ -1,0 +1,21 @@
+IPhistdb
+========
+
+IP history for ISC dhcpd 
+
+Check INSTALL for installation instructions
+
+This set of scripts parses dhcpd log files and imports history records 
+into MySQL database.
+
+Later lease history can be searched by using search.py script.
+
+Multiple failover servers are supported as long as every server processes log 
+files to the same database.
+
+Example:
+
+./search.py 192.168.0.1
+IP               MAC           Start                End                  Circuit-ID                     Remote-ID                      giaddr
+192.168.0.16     00deadbeef00  2012-12-16 18:21:15  2013-01-16 18:21:12  eth 1/0/21:4096.2 0/0/0/0/0/0  router                    192.168.0.1
+192.168.0.16     00deadbeef00  2013-01-16 18:21:15  2013-01-16 19:21:14  eth 1/0/21:4096.2 0/0/0/0/0/0  router                    192.168.0.1

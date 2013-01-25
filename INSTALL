@@ -1,0 +1,74 @@
+Scripts have been tested in RHEL6(CentOS6) but may work with another distros
+
+Prerequisites:
+==============
+
+1) MySQL-python package has to be installed
+
+
+2) dhcpd logs MUST be rotated with dateext 
+   enabled (filename.log-YYYYMMDD filename format)
+
+
+3) dhcpd config MUST include following lines in subnet 
+   section (see example/dhcpd.conf):
+
+--8<----dhcpd.conf------------------------------------------------------------
+
+on commit {
+  set l-ipaddr = binary-to-ascii(10, 8, ".", leased-address);
+  set l-macaddr = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+  set l-circuit-id = binary-to-ascii(16, 8, ":", option agent.circuit-id);
+  set l-remote-id = binary-to-ascii(16, 8, ":", option agent.remote-id);
+  
+  set l-agent-addr = binary-to-ascii(10, 8, ".", packet(24, 4));
+  set l-time = binary-to-ascii(16, 8, ":", encode-int(lease-time, 32));
+  
+  log(info, concat("LEASECOMMIT ", l-ipaddr, " ", l-macaddr, " ", l-circuit-id, " ", l-remote-id, " ", l-agent-addr, " ", l-time));
+}
+
+on release {
+  log(info, concat("LEASERELEASE ", l-ipaddr));
+}
+
+on expiry {
+  log(info, concat("LEASEEXPIRY ", l-ipaddr));
+}
+
+--8<--------------------------------------------------------------------------
+
+
+4) Redirect dhcpd logs to separate file /var/log/dhcpd.log:
+
+--8<----rsyslog.conf----------------------------------------------------------
+local6.*                                                 /var/log/dhcpd.log
+--8<--------------------------------------------------------------------------
+
+--8<----dhcpd.conf------------------------------------------------------------
+log-facility local6;
+--8<--------------------------------------------------------------------------
+
+
+5) Create MySQL database and tables from sql/mysql.sql
+
+
+Installation:
+=============
+
+1) Extract archive contents to /opt/IPhistdb (you can choose another 
+  directory, but configuration files have to be changed accordingly)
+  
+
+2) ln -s /opt/IPhistdb/cron.daily/iphistdb /etc/cron.daily/iphistdb
+
+
+3) mkdir -p /var/log/IPhistdb
+
+
+4) Place configuration file at /etc/IPhistdb/config.ini and
+  edit it (see example/config.ini)
+
+
+
+
+
