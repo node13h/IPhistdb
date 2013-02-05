@@ -102,6 +102,20 @@ class HistDB:
         finally:
             c.close()
 
+    def del_history_records(self, row_ids):
+        """
+        Deletes records with specified ids from history table
+        """
+        c = self._conn.cursor()
+        try:
+            q = "DELETE FROM history WHERE id_history=%s"
+
+            c.executemany(q, row_ids)
+            self._conn.commit()
+
+        finally:
+            c.close()
+
     def aggregate_history(self, ip=None):
         """
         Aggregates multiple records into leases and emits them via yield.
