@@ -118,11 +118,11 @@ class HistDB:
         try:
             if ip == None:
                 q = "SELECT ip, mac, timestamp, lease_time, circuit_id, " \
-                    "remote_id, giaddr, state " \
+                    "remote_id, giaddr, state, id_history " \
                     "FROM history ORDER BY timestamp ASC"
             else:
                 q = "SELECT ip, mac, timestamp, lease_time, circuit_id, " \
-                    "remote_id, giaddr, state " \
+                    "remote_id, giaddr, state, id_history " \
                     "FROM history WHERE ip=%s ORDER BY timestamp ASC"
 
             c.arraysize = 16
@@ -144,6 +144,8 @@ class HistDB:
 
                     if state == "FREE":
                         lease.free(record[2])
+
+                    lease.add_sqlrow(record[8])
 
                     if lease.complete:
                         yield lease
@@ -223,6 +225,10 @@ class IPLease:
 
             self.complete = True
 
+    def add_sqlrow(self, sqlrow):
+        self.rows.append(sqlrow)
+
     def reset(self):
         self.new = True
         self.complete = False
+        self.rows = []
