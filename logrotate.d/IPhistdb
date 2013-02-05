@@ -1,0 +1,8 @@
+/var/log/IPhistdb/process.log
+/var/log/IPhistdb/aggregate.log
+
+{
+    daily
+    rotate 7
+}
+
