@@ -56,7 +56,7 @@ Installation:
 =============
 
 Records are pushed to history DB in raw format by one or more DHCP servers. Then they ar
-pulled by aggregate.py script to aggregation DB (may be sae or separate DB server). 
+pulled by aggregate.py script to aggregation DB (may be same or separate DB server). 
 
 aggregate.py should be run on machine, which has access to both history and aggregation DB.
 
