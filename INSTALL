@@ -1,7 +1,7 @@
 Scripts have been tested in RHEL6(CentOS6) but may work with another distros
 
-Prerequisites:
-==============
+Prerequisites for DHCP servers (primary and failovers):
+=======================================================
 
 1) MySQL-python package has to be installed
 
@@ -49,14 +49,26 @@ log-facility local6;
 --8<--------------------------------------------------------------------------
 
 
-5) Create MySQL database and tables from sql/mysql.sql
-
+5) Create MySQL database and tables from sql/mysql.sql on database server. Also create users and
+   set appropriate permissions.
 
 Installation:
 =============
 
+Records are pushed to history DB in raw format by one or more DHCP servers. Then they ar
+pulled by aggregate.py script to aggregation DB (may be sae or separate DB server). 
+
+aggregate.py should be run on machine, which has access to both history and aggregation DB.
+
+Search and API server should only be able to access aggregation DB.
+
+
+
+DHCP server Installation:
+-------------------------
+
 1) Extract archive contents to /opt/IPhistdb (you can choose another 
-  directory, but configuration files have to be changed accordingly)
+   directory, but configuration files have to be changed accordingly)
   
 
 2) ln -s /opt/IPhistdb/cron.daily/histdb /etc/cron.daily/histdb
@@ -66,9 +78,33 @@ Installation:
 
 
 4) Place configuration file at /etc/IPhistdb/config.ini and
-  edit it (see example/config.ini)
+   edit it (see example/config.ini)
 
 5) ln -s /opt/IPhistdb/logrotate.d/dhcpd /etc/logrotate.d/dhcpd
    ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
+
+
+
+API/search server Installation:
+-------------------------------
+
+1) Extract archive contents to /opt/IPhistdb (you can choose another
+  directory, but configuration files have to be changed accordingly)
+
+
+2) ln -s /opt/IPhistdb/cron.daily/aggdb /etc/cron.daily/aggdb
+
+
+3) mkdir -p /var/log/IPhistdb
+
+
+4) Place configuration file at /etc/IPhistdb/aggregate.ini and
+   edit it (see example/aggregate.ini).
+
+5) Place configuration file at /etc/IPhistdb/config.ini and
+   edit it (see example/config.ini).
+
+
+6) ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
 
 
