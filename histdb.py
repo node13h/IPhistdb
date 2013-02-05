@@ -130,17 +130,19 @@ class HistDB:
         c = self._conn.cursor()
 
         try:
+            c.arraysize = 16
             if ip == None:
                 q = "SELECT ip, mac, timestamp, lease_time, circuit_id, " \
                     "remote_id, giaddr, state, id_history " \
                     "FROM history ORDER BY timestamp ASC"
+                c.execute(q)
+
             else:
                 q = "SELECT ip, mac, timestamp, lease_time, circuit_id, " \
                     "remote_id, giaddr, state, id_history " \
                     "FROM history WHERE ip=%s ORDER BY timestamp ASC"
+                c.execute(q, [ip])
 
-            c.arraysize = 16
-            c.execute(q, [ip])
             while True:
                 records = c.fetchmany()
                 if len(records) == 0:
