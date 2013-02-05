@@ -59,7 +59,7 @@ Installation:
   directory, but configuration files have to be changed accordingly)
   
 
-2) ln -s /opt/IPhistdb/cron.daily/iphistdb /etc/cron.daily/iphistdb
+2) ln -s /opt/IPhistdb/cron.daily/histdb /etc/cron.daily/histdb
 
 
 3) mkdir -p /var/log/IPhistdb
