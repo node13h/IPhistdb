@@ -68,7 +68,7 @@ Installation:
 4) Place configuration file at /etc/IPhistdb/config.ini and
   edit it (see example/config.ini)
 
-
-
+5) ln -s /opt/IPhistdb/logrotate.d/dhcpd /etc/logrotate.d/dhcpd
+   ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
 
 
