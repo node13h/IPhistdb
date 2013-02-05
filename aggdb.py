@@ -68,3 +68,26 @@ class AggDB:
             c.close()
 
         return num_rows
+
+    # TODO
+    def lookup_by_ip(self, ip, earliest, latest):
+        """
+        Find leases by <ip>
+
+        Arguments:
+        ip -- IP address
+        earliest -- earliest date <ip> was leased
+        latest -- latest date <ip> was leased
+        """
+        pass
+
+    def lookup_by_mac(self, mac, earliest, latest):
+        """
+        Find leases by <mac>
+
+        Arguments:
+        mac -- MAC address
+        earliest -- earliest date <mac> had a lease associated
+        latest -- latest date <mac> had a lease associated
+        """
+        pass
