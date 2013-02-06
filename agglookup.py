@@ -56,7 +56,7 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
+    if len(sys.argv) != 3:
         print "Usage: " + sys.argv[0] + " <IP> <YYYY-MM-DD hh:mm:ss>"
     else:
         main(sys.argv[1:])
