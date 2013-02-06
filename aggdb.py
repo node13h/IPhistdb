@@ -79,7 +79,33 @@ class AggDB:
         earliest -- earliest date <ip> was leased
         latest -- latest date <ip> was leased
         """
-        pass
+        c = self._conn.cursor()
+        try:
+            c.arraysize = 16
+            q = "SELECT " \
+                "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
+                "FROM aggregated " \
+                "WHERE ip=%s AND started <= %s AND stopped >= %s"
+            c.execute(q, [ip, earliest, latest])
+
+            while True:
+                records = c.fetchmany()
+                if len(records) == 0:
+                    break
+
+                for record in records:
+                    result = {}
+                    result["ip"] = record[0]
+                    result["mac"] = record[1]
+                    result["start"] = record[2]
+                    result["end"] = record[3]
+                    result["circuit_id"] = record[4]
+                    result["remote_id"] = record[5]
+                    result["giaddr"] = record[6]
+
+                    yield result
+        finally:
+            c.close()
 
     def lookup_by_mac(self, mac, earliest, latest):
         """
@@ -90,4 +116,30 @@ class AggDB:
         earliest -- earliest date <mac> had a lease associated
         latest -- latest date <mac> had a lease associated
         """
-        pass
+        c = self._conn.cursor()
+        try:
+            c.arraysize = 16
+            q = "SELECT " \
+                "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
+                "FROM aggregated " \
+                "WHERE mac=%s AND started <= %s AND stopped >= %s"
+            c.execute(q, [mac, earliest, latest])
+
+            while True:
+                records = c.fetchmany()
+                if len(records) == 0:
+                    break
+
+                for record in records:
+                    result = {}
+                    result["ip"] = record[0]
+                    result["mac"] = record[1]
+                    result["start"] = record[2]
+                    result["end"] = record[3]
+                    result["circuit_id"] = record[4]
+                    result["remote_id"] = record[5]
+                    result["giaddr"] = record[6]
+
+                    yield result
+        finally:
+            c.close()
