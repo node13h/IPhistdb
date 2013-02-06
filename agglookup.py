@@ -40,10 +40,7 @@ def main(argv):
                cfg.get("MySQL", "pass"),
                cfg.get("MySQL", "db"))
 
-    if len(argv) == 2:
-        target_date = datetime.strptime(argv[1], "%Y-%m-%d %H:%M:%S")
-    else:
-        target_date = None
+    target_date = datetime.strptime(argv[1], "%Y-%m-%d %H:%M:%S")
 
     print fmt.format("IP", "MAC", "Start", "End", "Circuit-ID",
                      "Remote-ID", "giaddr")
@@ -60,6 +57,6 @@ def main(argv):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print "Usage: " + sys.argv[0] + " <IP> [<YYYY-MM-DD hh:mm:ss>]"
+        print "Usage: " + sys.argv[0] + " <IP> <YYYY-MM-DD hh:mm:ss>"
     else:
         main(sys.argv[1:])
