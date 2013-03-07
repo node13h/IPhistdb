@@ -28,6 +28,9 @@ class AggDB:
         self._conn = MySQLdb.connect(host=host, user=user,
                                      passwd=passwd, db=db)
 
+    def close(self):
+        self._conn.close()
+
     def addlease(self, lease):
         """
         Adds aggregated lease to database.
