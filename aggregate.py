@@ -69,8 +69,9 @@ def main(argv):
     # All history:
     for item in hdb.aggregate_history():
         adb.addlease(item)
-        hdb.del_history_records(item.rows)
-        logger.debug(str(item.rows) + " IDs deleted from history")
+        if item.complete:
+            hdb.del_history_records(item.rows)
+            logger.debug(str(item.rows) + " IDs deleted from history")
 
     nr = adb.cleanup(cfg.get("Maintenance", "record_keep_days"))
     logger.debug(str(nr) + "leases deleted from aggregated")
