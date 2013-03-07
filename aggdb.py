@@ -69,77 +69,77 @@ class AggDB:
 
         return num_rows
 
-    # TODO
-    def lookup_by_ip(self, ip, earliest, latest):
+    def _generic_lookup(self, query, arguments, date_fmt):
+        c = self._conn.cursor()
+        try:
+            c.arraysize = 16
+            c.execute(query, arguments)
+
+            while True:
+                records = c.fetchmany()
+                if len(records) == 0:
+                    break
+
+                for record in records:
+                    result = {}
+                    result["ip"] = record[0]
+                    result["mac"] = record[1]
+                    result["start"] = record[2].strftime(date_fmt)
+                    result["end"] = record[3].strftime(date_fmt)
+                    result["circuit_id"] = record[4]
+                    result["remote_id"] = record[5]
+                    result["giaddr"] = record[6]
+
+                    yield result
+
+        finally:
+            c.close()
+
+    def lookup_by_ip(self, ip, date=None, date_fmt="%Y-%m-%d %H:%M:%S"):
         """
         Find leases by <ip>
 
         Arguments:
         ip -- IP address
-        earliest -- earliest date <ip> was leased
-        latest -- latest date <ip> was leased
+        date -- date <ip> was leased
         """
-        c = self._conn.cursor()
-        try:
-            c.arraysize = 16
+
+        if date is None:
+            q = "SELECT " \
+                "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
+                "FROM aggregated " \
+                "WHERE ip=%s"
+            a = [ip]
+        else:
             q = "SELECT " \
                 "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
                 "FROM aggregated " \
                 "WHERE ip=%s AND started <= %s AND stopped >= %s"
-            c.execute(q, [ip, earliest, latest])
+            a = [ip, date, date]
 
-            while True:
-                records = c.fetchmany()
-                if len(records) == 0:
-                    break
+        for result in self._generic_lookup(q, a, date_fmt):
+            yield result
 
-                for record in records:
-                    result = {}
-                    result["ip"] = record[0]
-                    result["mac"] = record[1]
-                    result["start"] = record[2]
-                    result["end"] = record[3]
-                    result["circuit_id"] = record[4]
-                    result["remote_id"] = record[5]
-                    result["giaddr"] = record[6]
-
-                    yield result
-        finally:
-            c.close()
-
-    def lookup_by_mac(self, mac, earliest, latest):
+    def lookup_by_mac(self, mac, date=None, date_fmt="%Y-%m-%d %H:%M:%S"):
         """
         Find leases by <mac>
 
         Arguments:
         mac -- MAC address
-        earliest -- earliest date <mac> had a lease associated
-        latest -- latest date <mac> had a lease associated
+        date -- date <mac> had a lease associated
         """
-        c = self._conn.cursor()
-        try:
-            c.arraysize = 16
+        if date is None:
+            q = "SELECT " \
+                "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
+                "FROM aggregated " \
+                "WHERE mac=%s"
+            a = [mac]
+        else:
             q = "SELECT " \
                 "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
                 "FROM aggregated " \
                 "WHERE mac=%s AND started <= %s AND stopped >= %s"
-            c.execute(q, [mac, earliest, latest])
+            a = [mac, date, date]
 
-            while True:
-                records = c.fetchmany()
-                if len(records) == 0:
-                    break
-
-                for record in records:
-                    result = {}
-                    result["ip"] = record[0]
-                    result["mac"] = record[1]
-                    result["start"] = record[2]
-                    result["end"] = record[3]
-                    result["circuit_id"] = record[4]
-                    result["remote_id"] = record[5]
-                    result["giaddr"] = record[6]
-
-                    yield result
-        finally:
-            c.close()
+        for result in self._generic_lookup(q, a, date_fmt):
+            yield result

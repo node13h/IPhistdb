@@ -45,11 +45,11 @@ def main(argv):
     print fmt.format("IP", "MAC", "Start", "End", "Circuit-ID",
                      "Remote-ID", "giaddr")
 
-    for item in db.lookup_by_ip(argv[0], target_date, target_date):
+    for item in db.lookup_by_ip(argv[0], target_date):
 
         print fmt.format(item["ip"], item["mac"],
-                         item["start"].strftime("%Y-%m-%d %H:%M:%S"),
-                         item["end"].strftime("%Y-%m-%d %H:%M:%S"),
+                         item["start"],
+                         item["end"],
                          item["circuit_id"],
                          item["remote_id"],
                          item["giaddr"])
