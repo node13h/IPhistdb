@@ -29,6 +29,7 @@ import ConfigParser
 import logging
 import datetime
 from histdb import DBException, HistDB
+import re
 
 
 config_filename = "/etc/IPhistdb/config.ini"
@@ -141,7 +142,7 @@ class HistFileImporter:
         with open(logfile, "r") as f:
             for line in f:
 
-                parts = line.rstrip("\n").split(" ")
+                parts = re.split("\s+", line.rstrip("\n"))
 
                 if len(parts) > 4:
                     if parts[5] == "LEASECOMMIT":
