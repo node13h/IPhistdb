@@ -170,7 +170,7 @@ class HistDB:
             # Emit open leases
             for key, lease in leases.all().iteritems():
                 if not lease.new and not lease.complete:
-                    lease.free()
+                    lease.checkpoint()
                     yield lease
 
         finally:
@@ -226,13 +226,9 @@ class IPLease:
 
         self.lease_time = lease_time
 
-    def free(self, timestamp=None):
+    def free(self, timestamp):
         if not self.new:
-            if timestamp is None:
-                self.end = self.start + timedelta(seconds=self.duration +
-                                                  self.lease_time)
-            else:
-                self.end = timestamp
+            self.end = timestamp
 
             td = self.end - self.start
             self.duration = (td.microseconds +
@@ -240,6 +236,15 @@ class IPLease:
                              10 ** 6) / 10 ** 6
 
             self.complete = True
+
+    def checkpoint(self):
+        if not self.new:
+            self.end = self.start + timedelta(seconds=self.duration +
+                                              self.lease_time)
+            td = self.end - self.start
+            self.duration = (td.microseconds +
+                             (td.seconds + td.days * 24 * 3600) *
+                             10 ** 6) / 10 ** 6
 
     def add_sqlrow(self, sqlrow):
         self.rows.append(sqlrow)
