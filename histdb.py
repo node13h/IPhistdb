@@ -131,7 +131,7 @@ class HistDB:
 
         try:
             c.arraysize = 16
-            if ip == None:
+            if ip is None:
                 q = "SELECT ip, mac, timestamp, lease_time, circuit_id, " \
                     "remote_id, giaddr, state, id_history " \
                     "FROM history ORDER BY timestamp ASC"
@@ -228,7 +228,7 @@ class IPLease:
 
     def free(self, timestamp=None):
         if not self.new:
-            if timestamp == None:
+            if timestamp is None:
                 self.end = self.start + timedelta(seconds=self.duration +
                                                   self.lease_time)
             else:
