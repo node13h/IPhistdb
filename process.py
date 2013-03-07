@@ -93,7 +93,7 @@ class HistFileImporter:
 
         now = datetime.datetime.now()
 
-        if year == None:
+        if year is None:
             current_year = now.year
         else:
             current_year = year
