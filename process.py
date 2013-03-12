@@ -111,6 +111,8 @@ class HistFileImporter:
             return self._parse_syslog_timestamp(timestamp, current_year - 1)
 
     def _hexstring2printable(self, hexstr):
+        """Outputs printable version of string with a hint prefix"""
+
         hs = self._tidy_dhcpd_hexstring(hexstr)
         s = hs.decode("hex")
         # Test if string is printable
