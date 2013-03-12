@@ -30,6 +30,7 @@ import logging
 import datetime
 from histdb import DBException, HistDB
 import re
+import string
 
 
 config_filename = "/etc/IPhistdb/config.ini"
@@ -109,13 +110,22 @@ class HistFileImporter:
         else:
             return self._parse_syslog_timestamp(timestamp, current_year - 1)
 
+    def _hexstring2printable(self, hexstr):
+        hs = self._tidy_dhcpd_hexstring(hexstr)
+        s = hs.decode("hex")
+        # Test if string is printable
+        if all(c in string.printable for c in s):
+            return "".join(["str:"], s)
+        else:
+            return "".join(["hex:", hs])
+
     def _parse_leasecommit(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
         timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
         ip_addr = parts[6]
         mac_addr = self._tidy_dhcpd_hexstring(parts[7])
-        circuit_id = self._tidy_dhcpd_hexstring(parts[8]).decode("hex")
-        remote_id = self._tidy_dhcpd_hexstring(parts[9]).decode("hex")
+        circuit_id = self._hexstring2printable(parts[8])
+        remote_id = self._hexstring2printable(parts[9])
         giaddr = parts[10]
         lease_time = int(self._tidy_dhcpd_hexstring(parts[11]), 16)
 
