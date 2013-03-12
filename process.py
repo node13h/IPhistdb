@@ -111,15 +111,10 @@ class HistFileImporter:
             return self._parse_syslog_timestamp(timestamp, current_year - 1)
 
     def _hexstring2printable(self, hexstr):
-        """Outputs printable version of string with a hint prefix"""
+        """Outputs printable version of string"""
 
         hs = self._tidy_dhcpd_hexstring(hexstr)
-        s = hs.decode("hex")
-        # Test if string is printable
-        if all(c in string.printable for c in s):
-            return "".join(["str:", s])
-        else:
-            return "".join(["hex:", hs])
+        return hs.decode("hex").encode("string_escape")
 
     def _parse_leasecommit(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
