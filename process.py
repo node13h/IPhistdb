@@ -115,7 +115,7 @@ class HistFileImporter:
         s = hs.decode("hex")
         # Test if string is printable
         if all(c in string.printable for c in s):
-            return "".join(["str:"], s)
+            return "".join(["str:", s])
         else:
             return "".join(["hex:", hs])
 
