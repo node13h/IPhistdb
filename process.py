@@ -30,7 +30,6 @@ import logging
 import datetime
 from histdb import DBException, HistDB
 import re
-import string
 
 
 config_filename = "/etc/IPhistdb/config.ini"
