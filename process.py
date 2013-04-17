@@ -139,7 +139,9 @@ class HistFileImporter:
 
     def _parse_leasefree(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
+        utc_ts = self.timezone.localize(ts).astimezone(pytz.utc)
+        # Always store time in UTC
+        timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
         ip_addr = parts[6]
 
         try:
