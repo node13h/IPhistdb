@@ -30,6 +30,7 @@ import logging
 import datetime
 from histdb import DBException, HistDB
 import re
+import pytz
 
 
 config_filename = "/etc/IPhistdb/config.ini"
@@ -42,6 +43,8 @@ class HistFileImporter:
 
         self._cfg = ConfigParser.ConfigParser()
         self._cfg.read(config)
+
+        self.timezone = pytz.timezone(self._cfg.get("App", "timezone"))
 
         self._logger = logging.getLogger("process")
 
@@ -117,7 +120,9 @@ class HistFileImporter:
 
     def _parse_leasecommit(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
+        utc_ts = self.timezone.localize(ts).astimezone(pytz.utc)
+        # Always store time in UTC
+        timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
         ip_addr = parts[6]
         mac_addr = self._tidy_dhcpd_hexstring(parts[7])
         circuit_id = self._hexstring2printable(parts[8])
