@@ -108,7 +108,7 @@ class HistFileImporter:
 
         # Date has to be in the past:
         if ts <= now:
-            return ts
+            return self.timezone.localize(ts)
         else:
             return self._parse_syslog_timestamp(timestamp, current_year - 1)
 
@@ -120,8 +120,8 @@ class HistFileImporter:
 
     def _parse_leasecommit(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        utc_ts = self.timezone.localize(ts).astimezone(pytz.utc)
         # Always store time in UTC
+        utc_ts = ts.astimezone(pytz.utc)
         timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
         ip_addr = parts[6]
         mac_addr = self._tidy_dhcpd_hexstring(parts[7])
@@ -139,8 +139,8 @@ class HistFileImporter:
 
     def _parse_leasefree(self, parts):
         ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        utc_ts = self.timezone.localize(ts).astimezone(pytz.utc)
         # Always store time in UTC
+        utc_ts = ts.astimezone(pytz.utc)
         timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
         ip_addr = parts[6]
 
