@@ -118,52 +118,59 @@ class HistFileImporter:
         hs = self._tidy_dhcpd_hexstring(hexstr)
         return hs.decode("hex").encode("string_escape")
 
-    def _parse_leasecommit(self, parts):
-        ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        # Always store time in UTC
-        utc_ts = ts.astimezone(pytz.utc)
-        timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
-        ip_addr = parts[6]
-        mac_addr = self._tidy_dhcpd_hexstring(parts[7])
-        circuit_id = self._hexstring2printable(parts[8])
-        remote_id = self._hexstring2printable(parts[9])
-        giaddr = parts[10]
-        lease_time = int(self._tidy_dhcpd_hexstring(parts[11]), 16)
+    def _parse_and_save_record(self, parts):
+        """Processes log record and saves structured data to DB"""
+        if len(parts) > 5:
 
-        try:
-            self._db.add_history_record(timestamp, ip_addr, mac_addr,
-                                        circuit_id, remote_id, giaddr,
-                                        lease_time, "LEASED")
-        except DBException as e:
-            self._logger.warning(e)
+            ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
+            # Always store time in UTC
+            utc_ts = ts.astimezone(pytz.utc)
+            timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
+            ip_addr = parts[6]
+            state = None
 
-    def _parse_leasefree(self, parts):
-        ts = self._parse_syslog_timestamp(" ".join(parts[0:3]))
-        # Always store time in UTC
-        utc_ts = ts.astimezone(pytz.utc)
-        timestamp = utc_ts.strftime("%Y-%m-%d %H:%M:%S")
-        ip_addr = parts[6]
+            if parts[5] == "LEASECOMMIT":
+                mac_addr = self._tidy_dhcpd_hexstring(parts[7])
+                circuit_id = self._hexstring2printable(parts[8])
+                remote_id = self._hexstring2printable(parts[9])
+                giaddr = parts[10]
+                lease_time = int(self._tidy_dhcpd_hexstring(parts[11]), 16)
+                state = "LEASED"
 
-        try:
-            self._db.add_history_record(timestamp, ip_addr, None,
-                                        None, None, None, None, "FREE")
-        except DBException as e:
-            self._logger.warning(e)
+            if parts[5] == "LEASERELEASE":
+                mac_addr = None
+                circuit_id = None
+                remote_id = None
+                giaddr = None
+                lease_time = None
+                state = "FREE"
+
+            if parts[5] == "LEASEEXPIRY":
+                mac_addr = None
+                circuit_id = None
+                remote_id = None
+                giaddr = None
+                lease_time = None
+                state = "FREE"
+
+            if not state is None:
+                try:
+                    self._db.add_history_record(timestamp, ip_addr, mac_addr,
+                                                circuit_id, remote_id, giaddr,
+                                                lease_time, state)
+                except DBException as e:
+                    self._logger.warning(e)
 
     def parse(self, logfile):
         """Parse file and import data to database"""
         with open(logfile, "r") as f:
             for line in f:
 
+                # regexp is needed here because there can be
+                # multiple spaces between fields
                 parts = re.split("\s+", line.rstrip("\n"))
 
-                if len(parts) > 4:
-                    if parts[5] == "LEASECOMMIT":
-                        self._parse_leasecommit(parts)
-                    if parts[5] == "LEASERELEASE":
-                        self._parse_leasefree(parts)
-                    if parts[5] == "LEASEEXPIRY":
-                        self._parse_leasefree(parts)
+                self._parse_and_save_record(parts)
 
         self._db.mark_as_processed(logfile)
         self._logger.debug(" ".join(["parse", logfile]))
