@@ -20,9 +20,13 @@
 # along with IPhistdb.  If not, see <http://www.gnu.org/licenses/>.
 
 import MySQLdb
+import pytz
 
 
 class AggDB:
+
+    def __init__(self):
+        self.lookup_tz = pytz.utc
 
     def connect(self, host, user, passwd, db):
         self._conn = MySQLdb.connect(host=host, user=user,
@@ -87,11 +91,14 @@ class AggDB:
                     result = {}
                     result["ip"] = record[0]
                     result["mac"] = record[1]
-                    result["start"] = record[2].strftime(date_fmt)
-                    result["end"] = record[3].strftime(date_fmt)
+                    start = pytz.utc.localize(record[2]).astimezone(self.lookup_tz)
+                    result["start"] = start.strftime(date_fmt)
+                    end = pytz.utc.localize(record[3]).astimezone(self.lookup_tz)
+                    result["end"] = end.strftime(date_fmt)
                     result["circuit_id"] = record[4]
                     result["remote_id"] = record[5]
                     result["giaddr"] = record[6]
+                    result["tz"] = self.lookup_tz
 
                     yield result
 
@@ -104,7 +111,7 @@ class AggDB:
 
         Arguments:
         ip -- IP address
-        date -- date <ip> was leased
+        date -- naive date <ip> was leased
         """
 
         if date is None:
@@ -114,11 +121,12 @@ class AggDB:
                 "WHERE ip=%s"
             a = [ip]
         else:
+            utc_date = self.lookup_tz.localize(date).astimezone(pytz.utc)
             q = "SELECT " \
                 "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
                 "FROM aggregated " \
                 "WHERE ip=%s AND started <= %s AND stopped >= %s"
-            a = [ip, date, date]
+            a = [ip, utc_date, utc_date]
 
         for result in self._generic_lookup(q, a, date_fmt):
             yield result
@@ -129,7 +137,7 @@ class AggDB:
 
         Arguments:
         mac -- MAC address
-        date -- date <mac> had a lease associated
+        date -- naive date <mac> had a lease associated
         """
         if date is None:
             q = "SELECT " \
@@ -138,11 +146,12 @@ class AggDB:
                 "WHERE mac=%s"
             a = [mac]
         else:
+            utc_date = self.lookup_tz.localize(date).astimezone(pytz.utc)
             q = "SELECT " \
                 "ip, mac, started, stopped, circuit_id, remote_id, giaddr " \
                 "FROM aggregated " \
                 "WHERE mac=%s AND started <= %s AND stopped >= %s"
-            a = [mac, date, date]
+            a = [mac, utc_date, utc_date]
 
         for result in self._generic_lookup(q, a, date_fmt):
             yield result
