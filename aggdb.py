@@ -92,13 +92,14 @@ class AggDB:
                     result["ip"] = record[0]
                     result["mac"] = record[1]
                     start = pytz.utc.localize(record[2]).astimezone(self.lookup_tz)
+                    # converting to string because we need serializable type here
                     result["start"] = start.strftime(date_fmt)
                     end = pytz.utc.localize(record[3]).astimezone(self.lookup_tz)
                     result["end"] = end.strftime(date_fmt)
                     result["circuit_id"] = record[4]
                     result["remote_id"] = record[5]
                     result["giaddr"] = record[6]
-                    result["tz"] = self.lookup_tz
+                    result["tz"] = str(self.lookup_tz)
 
                     yield result
 
