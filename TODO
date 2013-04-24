@@ -1,5 +1,22 @@
 Future plans:
 
 * IPv6 support
-* REST webservice
-* History trimming by date
+
+
+I think IPhistdb* repos should be joined into similar tree:
+
+IPstory
+  ipstorydb
+    aggdb.py
+    ischistdb.py
+  importers
+    dhcpd.py (maintenance as cli argument)
+    cnr.py (maintenance as cli argument)
+  routines
+    aggregate.py
+  api
+    django app here
+  doc
+  sql
+  examples
+
