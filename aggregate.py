@@ -25,8 +25,8 @@ daily as a cron job
 
 import sys
 from ConfigParser import ConfigParser
-from histdb import HistDB
-from aggdb import AggDB
+from iphistdb.histdb import HistDB
+from iphistdb.aggdb import AggDB
 import logging
 
 hconfig_filename = "/etc/IPhistdb/config.ini"

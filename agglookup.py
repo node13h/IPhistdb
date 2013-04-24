@@ -22,7 +22,7 @@
 
 import sys
 from ConfigParser import ConfigParser
-from aggdb import AggDB
+from iphistdb.aggdb import AggDB
 from datetime import datetime
 
 config_filename = "/etc/IPhistdb/aggregate.ini"

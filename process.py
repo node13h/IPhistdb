@@ -28,7 +28,7 @@ import os
 import ConfigParser
 import logging
 import datetime
-from histdb import DBException, HistDB
+from iphistdb.histdb import DBException, HistDB
 import re
 import pytz
 
