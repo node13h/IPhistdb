@@ -24,7 +24,7 @@
 # Add this file to cron.daily or cron.d (see INSTALL)
 
 from ConfigParser import ConfigParser
-from histdb import HistDB
+from iphistdb.histdb import HistDB
 
 
 config_filename = "/etc/IPhistdb/config.ini"
