@@ -1,7 +1,11 @@
 Scripts have been tested in RHEL6(CentOS6) but may work with another distros
 
-Prerequisites for DHCP servers (primary and failovers):
-=======================================================
+Importing of the Cisco Network Registrar ip history data is also supported
+by the processcnr.py script (tested on Windows 2003 server). See
+"CNR DHCP Server Installation (Windows)" section for more info.
+
+Prerequisites for ISC DHCP servers (primary and failovers):
+==========================================================
 
 1) MySQL-python package has to be installed
 
@@ -64,8 +68,8 @@ Search and API server should only be able to access aggregation DB.
 
 
 
-DHCP server Installation:
--------------------------
+ISC DHCP Server Installation:
+-----------------------------
 
 1) Extract archive contents to /opt/IPhistdb (you can choose another 
    directory, but configuration files have to be changed accordingly)
@@ -80,9 +84,26 @@ DHCP server Installation:
 4) Place configuration file at /etc/IPhistdb/config.ini and
    edit it (see example/config.ini)
 
-5) ln -s /opt/IPhistdb/logrotate.d/dhcpd /etc/logrotate.d/dhcpd
+5) Place logging configuration file at /etc/IPhistdb/process.logging.ini and
+   edit it (see example/process.logging.ini)
+
+6) ln -s /opt/IPhistdb/logrotate.d/dhcpd /etc/logrotate.d/dhcpd
    ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
 
+
+CNR DHCP Server Installation (Windows):
+---------------------------------------
+1) Extract archive contents to the directory of your choice (ex.: C:\IPhistdb)
+
+2) Create OS user for running script (ex.: processcnruser)
+
+3) Create IPhistdb folder in the Application Data folder of the created user 
+   (ex.: C:\Documents and Settings\processcnr\Application Data\IPhistdb)
+
+4) Create configuration files in created folder and edit them 
+   (see example/processcnr.ini and example/processcnr.logging.ini)
+
+5) Create scheduled task to run processcnr.py daily on behalf of created user.
 
 
 API/search server Installation:
@@ -101,10 +122,12 @@ API/search server Installation:
 4) Place configuration file at /etc/IPhistdb/aggregate.ini and
    edit it (see example/aggregate.ini).
 
-5) Place configuration file at /etc/IPhistdb/config.ini and
+5) Place logging configuration file at /etc/IPhistdb/aggregate.logging.ini and
+   edit it (see example/aggregate.logging.ini)
+
+6) Place configuration file at /etc/IPhistdb/config.ini and
    edit it (see example/config.ini).
 
-
-6) ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
+7) ln -s /opt/IPhistdb/logrotate.d/IPhistdb /etc/logrotate.d/IPhistdb
 
 
