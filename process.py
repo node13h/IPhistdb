@@ -27,6 +27,7 @@ import sys
 import os
 import ConfigParser
 import logging
+import logging.config
 import datetime
 from iphistdb.histdb import DBException, HistDB
 import re
@@ -34,6 +35,7 @@ import pytz
 
 
 config_filename = "/etc/IPhistdb/config.ini"
+config_logging_filename = "/etc/IPhistdb/process.logging.ini"
 
 
 class HistFileImporter:
@@ -46,20 +48,9 @@ class HistFileImporter:
 
         self.timezone = pytz.timezone(self._cfg.get("App", "timezone"))
 
-        self._logger = logging.getLogger("process")
+        logging.config.fileConfig(config_logging_filename)
 
-        loglevels = {"NOTSET": logging.NOTSET, "DEBUG": logging.DEBUG,
-                     "INFO": logging.INFO, "WARNING": logging.WARNING,
-                     "ERROR": logging.ERROR, "CRITICAL": logging.CRITICAL}
-
-        self._logger.setLevel(loglevels[self._cfg.get("Logging", "level")])
-
-        fh = logging.FileHandler(filename=self._cfg.get("Logging", "logfile"))
-
-        lformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        fh.setFormatter(logging.Formatter(lformat))
-
-        self._logger.addHandler(fh)
+        self._logger = logging.getLogger("file")
 
         self._db.connect(self._cfg.get("MySQL", "host"),
                          self._cfg.get("MySQL", "user"),

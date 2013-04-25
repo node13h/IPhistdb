@@ -28,9 +28,11 @@ from ConfigParser import ConfigParser
 from iphistdb.histdb import HistDB
 from iphistdb.aggdb import AggDB
 import logging
+import logging.config
 
 hconfig_filename = "/etc/IPhistdb/config.ini"
 aconfig_filename = "/etc/IPhistdb/aggregate.ini"
+config_logging_filename = "/etc/IPhistdb/aggregate.logging.ini"
 
 
 def main(argv):
@@ -51,20 +53,8 @@ def main(argv):
                 cfg.get("MySQL", "pass"),
                 cfg.get("MySQL", "db"))
 
-    logger = logging.getLogger("aggregate")
-
-    loglevels = {"NOTSET": logging.NOTSET, "DEBUG": logging.DEBUG,
-                 "INFO": logging.INFO, "WARNING": logging.WARNING,
-                 "ERROR": logging.ERROR, "CRITICAL": logging.CRITICAL}
-
-    logger.setLevel(loglevels[cfg.get("Logging", "level")])
-
-    fh = logging.FileHandler(filename=cfg.get("Logging", "logfile"))
-
-    lformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    fh.setFormatter(logging.Formatter(lformat))
-
-    logger.addHandler(fh)
+    logging.config.fileConfig(config_logging_filename)
+    logger = logging.getLogger("file")
 
     # All history:
     for item in hdb.aggregate_history():
