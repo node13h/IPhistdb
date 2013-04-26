@@ -64,7 +64,7 @@ def main(argv):
             logger.debug(str(item.rows) + " IDs deleted from history")
 
     nr = adb.cleanup(cfg.get("Maintenance", "record_keep_days"))
-    logger.debug(str(nr) + "leases deleted from aggregated")
+    logger.info(str(nr) + "leases deleted from aggregated")
 
 
 if __name__ == "__main__":
