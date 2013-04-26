@@ -266,7 +266,9 @@ def main(argv):
                           cfg.get('CNR', 'pass'))
 
             nrcmd.dhcp_trimIPHistory(cfg.get('CNR', 'keep_history_days'))
+            logger.debug('dhcp trimIPhistory')
             nrcmd.dhcp_reload()
+            logger.debug('dhcp reload')
 
         finally:
             unlock(cfg.getpath('App', 'lockfile'))
