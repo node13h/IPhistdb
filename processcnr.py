@@ -183,12 +183,21 @@ class Nrcmd(CnrCmd):
 
         status_code, status_text = re.split(r'\W', output[0], 1)
 
+        if status_code > 199:
+            raise CNRException(' '.join([output[0]]))
+
         if len(output) > 1:
             data = output[1:]
         else:
             data = None
 
         return (int(status_code), status_text), data
+
+    def dhcp_reload(self):
+        return self.execute('dhcp reload')
+
+    def dhcp_trimIPHistory(self, days):
+        return self.execute(''.join(['dhcp trimIPHistory -', str(days), 'd']))
 
 
 def sendmail(smtp, mailfrom, mailto, subject, msg):
@@ -256,13 +265,8 @@ def main(argv):
                           cfg.get('CNR', 'user'),
                           cfg.get('CNR', 'pass'))
 
-            (code, codetext), data = nrcmd.execute('dhcp trimIPHistory -14d')
-            if code > 199:
-                logger.error(' '.join(['nrcmd', str(code), codetext]))
-
-            (code, codetext), data = nrcmd.execute('dhcp reload')
-            if code > 199:
-                logger.error(' '.join(['nrcmd', str(code), codetext]))
+            nrcmd.dhcp_trimIPHistory(cfg.get('CNR', 'keep_history_days'))
+            nrcmd.dhcp_reload()
 
         finally:
             unlock(cfg.getpath('App', 'lockfile'))
