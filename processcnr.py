@@ -183,7 +183,7 @@ class Nrcmd(CnrCmd):
 
         status_code, status_text = re.split(r'\W', output[0], 1)
 
-        if status_code > 199:
+        if int(status_code) > 199:
             raise CNRException(' '.join([output[0]]))
 
         if len(output) > 1:
