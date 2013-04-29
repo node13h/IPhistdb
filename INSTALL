@@ -93,6 +93,8 @@ ISC DHCP Server Installation:
 
 CNR DHCP Server Installation (Windows):
 ---------------------------------------
+Required Python packages: pytz, pymysql
+
 1) Extract archive contents to the directory of your choice (ex.: C:\IPhistdb)
 
 2) Create OS user for running script (ex.: processcnruser)
