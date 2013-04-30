@@ -99,7 +99,7 @@ class Iphist(CnrCmd):
 
         Raises:
         CNRException,
-        UnknownStateException
+        ParseException
         """
 
         format = 'address,'\
