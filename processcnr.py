@@ -189,7 +189,7 @@ class Nrcmd(CnrCmd):
         if len(output) > 1:
             data = output[1:]
         else:
-            data = None
+            data = []
 
         return (int(status_code), status_text), data
 
