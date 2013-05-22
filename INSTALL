@@ -115,7 +115,10 @@ API/search server Installation:
   directory, but configuration files have to be changed accordingly)
 
 
-2) ln -s /opt/IPhistdb/cron.daily/aggdb /etc/cron.daily/aggdb
+2) ln -s /opt/IPhistdb/cron.d/iphistdb-aggregate /etc/cron.d/iphistdb-aggregate
+   Edit start time if needed. Keep in mind, that on RHEL6 for example daily scripts are
+   run via anacron and you should avoid aggregating leases while IPhistdb is 
+   importing DHCP server logs.
 
 
 3) mkdir -p /var/log/IPhistdb
