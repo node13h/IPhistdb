@@ -75,7 +75,7 @@ ISC DHCP Server Installation:
    directory, but configuration files have to be changed accordingly)
   
 
-2) ln -s /opt/IPhistdb/cron.daily/histdb /etc/cron.daily/histdb
+2) ln -s /opt/IPhistdb/cron.daily/iphistdb-maintenance /etc/cron.daily/iphistdb-maintenance
 
 
 3) mkdir -p /var/log/IPhistdb
