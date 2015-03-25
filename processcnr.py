@@ -151,6 +151,8 @@ class Iphist(CnrCmd):
                 pass
             elif row[6] == 'unavailable':
                 pass
+            elif row[6] == 'pending-available':
+                pass
             else:
                 raise ParseException(row)
 
