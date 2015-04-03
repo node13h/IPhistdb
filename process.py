@@ -42,6 +42,7 @@ config_logging_filename = "/etc/IPhistdb/process.logging.ini"
 class HistFileImporter:
 
     def __init__(self, config):
+        self.server = platform.node()
         self._db = HistDB()
 
         self._cfg = ConfigParser.ConfigParser()
@@ -60,23 +61,23 @@ class HistFileImporter:
 
         self._logger.debug("init")
 
-    def add(self, server, filenames):
+    def add(self, filenames):
         """Add file(s) to database"""
-        self._db.addfiles(server, filenames)
+        self._db.addfiles(self.server, filenames)
         self._logger.debug("add" + " ".join(filenames))
 
     def remove(self, filename):
         """Remove file from database"""
-        self._db.removefile(filename)
+        self._db.removefile(self.server, filename)
         self._logger.warning(" ".join(["remove", filename]))
 
     def process(self):
         """Process unprocessed files and import parsed data to database"""
-        for logfile in self._db.get_unprocessed_files():
+        for logfile in self._db.get_unprocessed_files(self.server):
             try:
                 self.parse(logfile)
             except IOError:
-                self.remove(logfile)
+                self.remove(self.server, logfile)
         self._logger.debug("process")
 
     def _tidy_dhcpd_hexstring(self, hexstr):
@@ -164,7 +165,7 @@ class HistFileImporter:
 
                 self._parse_and_save_record(parts)
 
-        self._db.mark_as_processed(logfile)
+        self._db.mark_as_processed(self.server, logfile)
         self._logger.debug(" ".join(["parse", logfile]))
 
 
@@ -174,7 +175,7 @@ def main(argv):
 
     if len(argv) > 0:
 
-        h.add(platform.node(), filter(os.path.isfile, argv))
+        h.add(filter(os.path.isfile, argv))
 
     h.process()
 

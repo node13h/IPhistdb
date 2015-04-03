@@ -48,35 +48,35 @@ class HistDB:
         finally:
             c.close()
 
-    def removefile(self, filename):
+    def removefile(self, server, filename):
         c = self._conn.cursor()
         try:
-            q = "DELETE FROM files WHERE filename=%s"
-            c.execute(q, filename)
+            q = "DELETE FROM files WHERE server=%s AND filename=%s"
+            c.execute(q, [server, filename])
             self._conn.commit()
         finally:
             c.close()
 
-    def get_unprocessed_files(self):
+    def get_unprocessed_files(self, server):
         c = self._conn.cursor()
         try:
-            q = "SELECT filename FROM files WHERE processed IS NULL"
-            c.execute(q)
+            q = "SELECT filename FROM files WHERE server=%s AND processed IS NULL"
+            c.execute(q, server)
             result = map(lambda x: x[0], c.fetchall())
         finally:
             c.close()
 
         return result
 
-    def mark_as_processed(self, filename):
+    def mark_as_processed(self, server, filename):
         """
         Marks <filename> as processed by writing current date
         into `processed` column
         """
         c = self._conn.cursor()
         try:
-            q = "UPDATE files SET processed=NOW() WHERE filename=%s"
-            c.execute(q, [filename])
+            q = "UPDATE files SET processed=NOW() WHERE server=% AND filename=%s"
+            c.execute(q, [server, filename])
             self._conn.commit()
         finally:
             c.close()

@@ -1,9 +1,10 @@
 CREATE TABLE `files` (
   `id_files` int(11) NOT NULL AUTO_INCREMENT,
+  `server` varchar(255) NOT NULL,
   `filename` varchar(255) NOT NULL,
   `processed` datetime DEFAULT NULL,
   PRIMARY KEY (`id_files`),
-  UNIQUE KEY `filename_UNIQUE` (`filename`),
+  UNIQUE KEY `filename_UNIQUE` (`server`,`filename`),
   KEY `processed_IDX` (`processed`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
