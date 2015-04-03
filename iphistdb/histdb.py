@@ -75,7 +75,7 @@ class HistDB:
         """
         c = self._conn.cursor()
         try:
-            q = "UPDATE files SET processed=NOW() WHERE server=% AND filename=%s"
+            q = "UPDATE files SET processed=NOW() WHERE server=%s AND filename=%s"
             c.execute(q, [server, filename])
             self._conn.commit()
         finally:
