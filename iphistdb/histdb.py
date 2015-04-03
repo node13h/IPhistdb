@@ -34,15 +34,16 @@ class HistDB:
         self._conn = MySQLdb.connect(host=host, user=user,
                                      passwd=passwd, db=db)
 
-    def addfiles(self, filenames):
+    def addfiles(self, server, filenames):
         c = self._conn.cursor()
         try:
             # As we are inserting multiple values here -
             # "ON DUPLICATE KEY" construction is needed, so
             # failure of the one INSERT doesn't affect others
-            q = "INSERT INTO files (filename) VALUES (%s) " \
-                "ON DUPLICATE KEY UPDATE filename=VALUES(filename)"
-            c.executemany(q, filenames)
+            q = "INSERT INTO files (server, filename) VALUES (%s, %s) " \
+                "ON DUPLICATE KEY UPDATE server=VALUES(server), filename=VALUES(filename)"
+            params = [(server, filename) for filename in filenames]
+            c.executemany(q, params)
             self._conn.commit()
         finally:
             c.close()

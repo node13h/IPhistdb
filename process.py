@@ -32,6 +32,7 @@ import datetime
 from iphistdb.histdb import DBException, HistDB
 import re
 import pytz
+import platform
 
 
 config_filename = "/etc/IPhistdb/config.ini"
@@ -59,9 +60,9 @@ class HistFileImporter:
 
         self._logger.debug("init")
 
-    def add(self, filenames):
+    def add(self, server, filenames):
         """Add file(s) to database"""
-        self._db.addfiles(filenames)
+        self._db.addfiles(server, filenames)
         self._logger.debug("add" + " ".join(filenames))
 
     def remove(self, filename):
@@ -173,7 +174,7 @@ def main(argv):
 
     if len(argv) > 0:
 
-        h.add(filter(os.path.isfile, argv))
+        h.add(platform.node(), filter(os.path.isfile, argv))
 
     h.process()
 
